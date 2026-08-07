@@ -29,8 +29,11 @@ export class AgentEngine {
       });
 
       if (searchResult.success && searchResult.result?.results) {
-        const snippets = searchResult.result.results.map((r: any) => `- ${r.snippet} (${r.link})`).join('\n');
-        augmentedPrompt += `\n\n[Live Web Search Context]:\n${snippets}`;
+        const snippets = searchResult.result.results
+          .map((r: any, idx: number) => `Source [${idx + 1}]: ${r.title}\nURL: ${r.link}\nSummary: ${r.snippet}`)
+          .join('\n\n');
+
+        augmentedPrompt += `\n\n[Live Web Search Context]:\n${snippets}\n\n[Instructions]: Synthesize the web search findings into a rich, structured, executive-grade AI response. Organize with Markdown headers (###), bullet points, bold key terms, and clean hyperlinked reference citations in the format [Source Name](URL). Do not output raw internal context labels or unformatted URLs.`;
       }
     }
 

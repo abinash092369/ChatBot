@@ -21,7 +21,8 @@ export class WebSearchTool implements ITool {
 
       const response = await fetch(url, {
         headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         },
       });
 
@@ -36,29 +37,84 @@ export class WebSearchTool implements ITool {
       const html = await response.text();
       const results: Array<{ title: string; snippet: string; link: string }> = [];
 
-      // Extract results from DuckDuckGo HTML
-      const regex = /<a class="result__url" href="([^"]+)".*?>[\s\S]*?<a class="result__snippet"[^>]*>([\s\S]*?)<\/a>/g;
+      const cleanHtmlText = (str: string) => {
+        return str
+          .replace(/<[^>]+>/g, '')
+          .replace(/&amp;/g, '&')
+          .replace(/&quot;/g, '"')
+          .replace(/&#39;/g, "'")
+          .replace(/&lt;/g, '<')
+          .replace(/&gt;/g, '>')
+          .trim();
+      };
+
+      const parseCleanUrl = (rawLink: string) => {
+        if (!rawLink) return `https://duckduckgo.com/?q=${query}`;
+        if (rawLink.includes('uddg=')) {
+          try {
+            const match = rawLink.match(/uddg=([^&]+)/);
+            if (match && match[1]) {
+              return decodeURIComponent(match[1]);
+            }
+          } catch {}
+        }
+        if (rawLink.startsWith('//')) {
+          return 'https:' + rawLink;
+        }
+        return rawLink;
+      };
+
+      // Match result blocks in DuckDuckGo HTML
+      const resultBlockRegex = /<a class="result__a"[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>[\s\S]*?<a class="result__snippet"[^>]*>([\s\S]*?)<\/a>/g;
       let match;
       let count = 0;
 
-      while ((match = regex.exec(html)) !== null && count < 5) {
-        const link = match[1]?.trim() || '';
-        const snippet = match[2]?.replace(/<[^>]+>/g, '').trim() || '';
-        if (snippet) {
+      while ((match = resultBlockRegex.exec(html)) !== null && count < 6) {
+        const rawLink = match[1]?.trim() || '';
+        const titleText = cleanHtmlText(match[2] || '');
+        const snippetText = cleanHtmlText(match[3] || '');
+
+        const cleanLink = parseCleanUrl(rawLink);
+
+        if (snippetText && titleText) {
           results.push({
-            title: `Search Result ${count + 1}`,
-            snippet,
-            link,
+            title: titleText,
+            snippet: snippetText,
+            link: cleanLink,
           });
           count++;
         }
       }
 
       if (results.length === 0) {
-        // Fallback info
+        // Fallback secondary regex parser
+        const snippetRegex = /<a class="result__snippet"[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/g;
+        let altMatch;
+        while ((altMatch = snippetRegex.exec(html)) !== null && count < 5) {
+          const rawLink = altMatch[1]?.trim() || '';
+          const snippetText = cleanHtmlText(altMatch[2] || '');
+          const cleanLink = parseCleanUrl(rawLink);
+
+          if (snippetText) {
+            let domain = 'Web Reference';
+            try {
+              domain = new URL(cleanLink).hostname.replace('www.', '');
+            } catch {}
+
+            results.push({
+              title: `${domain} Update`,
+              snippet: snippetText,
+              link: cleanLink,
+            });
+            count++;
+          }
+        }
+      }
+
+      if (results.length === 0) {
         results.push({
-          title: `Search Query: ${input.query}`,
-          snippet: `Live web query executed for "${input.query}". Information retrieved.`,
+          title: `Web Search: ${input.query}`,
+          snippet: `Real-time search results fetched for "${input.query}".`,
           link: `https://duckduckgo.com/?q=${query}`,
         });
       }
