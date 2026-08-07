@@ -1,0 +1,43 @@
+# Production Dockerfile for Backend Service
+FROM node:22-alpine AS builder
+
+WORKDIR /app
+
+# Copy root monorepo manifests
+COPY package*.json ./
+COPY packages/config/package*.json ./packages/config/
+COPY packages/types/package*.json ./packages/types/
+COPY packages/utils/package*.json ./packages/utils/
+COPY packages/api-client/package*.json ./packages/api-client/
+COPY apps/server/package*.json ./apps/server/
+COPY prisma ./prisma/
+
+# Install dependencies
+RUN npm ci
+
+# Copy full source
+COPY . .
+
+# Generate Prisma Client & Build Packages & Server
+RUN npx prisma generate
+RUN npm run build --workspace=packages/types
+RUN npm run build --workspace=packages/utils
+RUN npm run build --workspace=apps/server
+
+# Runner Stage
+FROM node:22-alpine AS runner
+
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV PORT=5000
+
+COPY package*.json ./
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/packages ./packages
+COPY --from=builder /app/apps/server/dist ./apps/server/dist
+COPY --from=builder /app/prisma ./prisma
+
+EXPOSE 5000
+
+CMD ["node", "apps/server/dist/server.js"]

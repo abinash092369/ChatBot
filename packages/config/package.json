@@ -1,0 +1,13 @@
+{
+  "name": "@chatbot/config",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "build": "echo 'No build required for config'",
+    "typecheck": "echo 'No typecheck required for config'"
+  },
+  "files": [
+    "tsconfig.base.json"
+  ]
+}
