@@ -152,6 +152,7 @@ export function Sidebar({ collapsed, setCollapsed }: { collapsed: boolean; setCo
       <div className="px-3 pb-2 space-y-1">
         <Link
           href="/knowledge"
+          prefetch={true}
           className={cn(
             'flex items-center space-x-3 px-3 py-1.5 rounded-xl text-xs font-medium transition-colors',
             pathname === '/knowledge' ? 'bg-primary text-primary-foreground font-semibold' : 'text-muted-foreground hover:bg-accent hover:text-foreground',
@@ -162,6 +163,7 @@ export function Sidebar({ collapsed, setCollapsed }: { collapsed: boolean; setCo
         </Link>
         <Link
           href="/tools"
+          prefetch={true}
           className={cn(
             'flex items-center space-x-3 px-3 py-1.5 rounded-xl text-xs font-medium transition-colors',
             pathname === '/tools' ? 'bg-primary text-primary-foreground font-semibold' : 'text-muted-foreground hover:bg-accent hover:text-foreground',
@@ -172,6 +174,7 @@ export function Sidebar({ collapsed, setCollapsed }: { collapsed: boolean; setCo
         </Link>
         <Link
           href="/prompts"
+          prefetch={true}
           className={cn(
             'flex items-center space-x-3 px-3 py-1.5 rounded-xl text-xs font-medium transition-colors',
             pathname === '/prompts' ? 'bg-primary text-primary-foreground font-semibold' : 'text-muted-foreground hover:bg-accent hover:text-foreground',
@@ -182,6 +185,7 @@ export function Sidebar({ collapsed, setCollapsed }: { collapsed: boolean; setCo
         </Link>
         <Link
           href="/workflows"
+          prefetch={true}
           className={cn(
             'flex items-center space-x-3 px-3 py-1.5 rounded-xl text-xs font-medium transition-colors',
             pathname === '/workflows' ? 'bg-primary text-primary-foreground font-semibold' : 'text-muted-foreground hover:bg-accent hover:text-foreground',
@@ -192,6 +196,7 @@ export function Sidebar({ collapsed, setCollapsed }: { collapsed: boolean; setCo
         </Link>
         <Link
           href="/billing"
+          prefetch={true}
           className={cn(
             'flex items-center space-x-3 px-3 py-1.5 rounded-xl text-xs font-medium transition-colors',
             pathname === '/billing' ? 'bg-primary text-primary-foreground font-semibold' : 'text-muted-foreground hover:bg-accent hover:text-foreground',
@@ -202,6 +207,7 @@ export function Sidebar({ collapsed, setCollapsed }: { collapsed: boolean; setCo
         </Link>
         <Link
           href="/apikeys"
+          prefetch={true}
           className={cn(
             'flex items-center space-x-3 px-3 py-1.5 rounded-xl text-xs font-medium transition-colors',
             pathname === '/apikeys' ? 'bg-primary text-primary-foreground font-semibold' : 'text-muted-foreground hover:bg-accent hover:text-foreground',
@@ -212,6 +218,7 @@ export function Sidebar({ collapsed, setCollapsed }: { collapsed: boolean; setCo
         </Link>
         <Link
           href="/org/settings"
+          prefetch={true}
           className={cn(
             'flex items-center space-x-3 px-3 py-1.5 rounded-xl text-xs font-medium transition-colors',
             pathname === '/org/settings' ? 'bg-primary text-primary-foreground font-semibold' : 'text-muted-foreground hover:bg-accent hover:text-foreground',
@@ -222,6 +229,7 @@ export function Sidebar({ collapsed, setCollapsed }: { collapsed: boolean; setCo
         </Link>
         <Link
           href="/analytics"
+          prefetch={true}
           className={cn(
             'flex items-center space-x-3 px-3 py-1.5 rounded-xl text-xs font-medium transition-colors',
             pathname === '/analytics' ? 'bg-primary text-primary-foreground font-semibold' : 'text-muted-foreground hover:bg-accent hover:text-foreground',
@@ -345,6 +353,7 @@ export function Sidebar({ collapsed, setCollapsed }: { collapsed: boolean; setCo
       <div className="border-t border-border p-3 space-y-1">
         <Link
           href="/profile"
+          prefetch={true}
           className="flex items-center space-x-3 px-3 py-1.5 rounded-xl text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground"
         >
           <User className="h-4 w-4" />
@@ -352,6 +361,7 @@ export function Sidebar({ collapsed, setCollapsed }: { collapsed: boolean; setCo
         </Link>
         <Link
           href="/settings"
+          prefetch={true}
           className="flex items-center space-x-3 px-3 py-1.5 rounded-xl text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground"
         >
           <Settings className="h-4 w-4" />
@@ -359,6 +369,7 @@ export function Sidebar({ collapsed, setCollapsed }: { collapsed: boolean; setCo
         </Link>
         <Link
           href="/audit-logs"
+          prefetch={true}
           className="flex items-center space-x-3 px-3 py-1.5 rounded-xl text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground"
         >
           <Shield className="h-4 w-4" />
