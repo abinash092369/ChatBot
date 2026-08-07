@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useChatStore } from '@/stores/chat.store';
 import { apiClient } from '@/services/api.service';
@@ -34,6 +34,7 @@ import {
 
 export function Sidebar({ collapsed, setCollapsed }: { collapsed: boolean; setCollapsed: (val: boolean) => void }) {
   const pathname = usePathname();
+  const router = useRouter();
   const queryClient = useQueryClient();
   const { activeConversationId, setActiveConversationId } = useChatStore();
 
@@ -75,6 +76,16 @@ export function Sidebar({ collapsed, setCollapsed }: { collapsed: boolean; setCo
 
   const handleStartNewChat = () => {
     setActiveConversationId(null);
+    if (pathname !== '/dashboard') {
+      router.push('/dashboard');
+    }
+  };
+
+  const handleSelectConversation = (id: string) => {
+    setActiveConversationId(id);
+    if (pathname !== '/dashboard') {
+      router.push('/dashboard');
+    }
   };
 
   const handleRename = (conv: Conversation) => {
@@ -245,7 +256,7 @@ export function Sidebar({ collapsed, setCollapsed }: { collapsed: boolean; setCo
             {pinnedList.map((conv) => (
               <div
                 key={conv.id}
-                onClick={() => setActiveConversationId(conv.id)}
+                onClick={() => handleSelectConversation(conv.id)}
                 className={cn(
                   'group relative flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium cursor-pointer transition-all',
                   activeConversationId === conv.id
@@ -284,7 +295,7 @@ export function Sidebar({ collapsed, setCollapsed }: { collapsed: boolean; setCo
             recentList.map((conv) => (
               <div
                 key={conv.id}
-                onClick={() => setActiveConversationId(conv.id)}
+                onClick={() => handleSelectConversation(conv.id)}
                 className={cn(
                   'group relative flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium cursor-pointer transition-all',
                   activeConversationId === conv.id
