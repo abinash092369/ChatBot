@@ -112,7 +112,9 @@ export class AuthController {
   public async googleRedirect(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const clientId = env.GOOGLE_CLIENT_ID;
-      const callbackUrl = env.GOOGLE_CALLBACK_URL || `https://chatbot-m2lx.onrender.com/api/v1/auth/google/callback`;
+      const callbackUrl = (env.NODE_ENV === 'production' || !env.GOOGLE_CALLBACK_URL || env.GOOGLE_CALLBACK_URL.includes('localhost'))
+        ? `${env.API_URL}/api/v1/auth/google/callback`
+        : env.GOOGLE_CALLBACK_URL;
       if (!clientId) {
         res.status(500).json(createApiResponse(false, 'Google OAuth Client ID is not configured', null));
         return;
