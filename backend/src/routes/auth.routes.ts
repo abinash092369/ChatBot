@@ -9,6 +9,8 @@ const router = Router();
 
 router.post('/register', authRateLimiter, validateBody(registerSchema), (req, res, next) => authController.register(req, res, next));
 router.post('/login', authRateLimiter, validateBody(loginSchema), (req, res, next) => authController.login(req, res, next));
+router.get('/google', (req, res, next) => authController.googleRedirect(req, res, next));
+router.get('/google/callback', (req, res, next) => authController.googleCallback(req, res, next));
 router.post('/refresh', (req, res, next) => authController.refreshToken(req, res, next));
 router.post('/logout', authenticate, (req, res, next) => authController.logout(req, res, next));
 router.post('/verify-email', validateBody(verifyEmailSchema), (req, res, next) => authController.verifyEmail(req, res, next));

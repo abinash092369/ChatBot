@@ -5,6 +5,7 @@ import { auditRepository } from '../repositories/audit.repository.js';
 import { hashPassword, comparePassword } from '../utils/bcrypt.util.js';
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from '../utils/jwt.util.js';
 import { AppError } from '../middlewares/error.middleware.js';
+import { env } from '../config/env.config.js';
 
 export class AuthService {
   private hashToken(token: string): string {
@@ -279,6 +280,102 @@ export class AuthService {
     await authRepository.revokeAllUserSessions(record.userId);
 
     return { message: 'Password reset completed successfully. Please log in with your new password.' };
+  }
+
+  public async handleGoogleCallback(code: string, ipAddress?: string, userAgent?: string) {
+    const clientId = env.GOOGLE_CLIENT_ID;
+    const clientSecret = env.GOOGLE_CLIENT_SECRET;
+    const redirectUri = env.GOOGLE_CALLBACK_URL || `${env.API_URL}/api/v1/auth/google/callback`;
+
+    // 1. Exchange code for tokens with Google
+    const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        code,
+        client_id: clientId || '',
+        client_secret: clientSecret || '',
+        redirect_uri: redirectUri,
+        grant_type: 'authorization_code',
+      }),
+    });
+
+    const tokenData: any = await tokenRes.json();
+    if (!tokenRes.ok || !tokenData.access_token) {
+      throw new AppError('Failed to exchange authorization code with Google', 400, 'GOOGLE_AUTH_ERROR');
+    }
+
+    // 2. Fetch Google User Profile
+    const profileRes = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+      headers: { Authorization: `Bearer ${tokenData.access_token}` },
+    });
+    const profile: any = await profileRes.json();
+
+    if (!profile.email) {
+      throw new AppError('Google profile did not contain email address', 400, 'GOOGLE_EMAIL_MISSING');
+    }
+
+    // 3. Find or Create User
+    let user = await userRepository.findByEmail(profile.email);
+    if (!user) {
+      const defaultRole = await userRepository.findRoleByName('USER');
+      if (!defaultRole) {
+        throw new AppError('Default user role not found in system', 500, 'ROLE_NOT_FOUND');
+      }
+
+      user = await userRepository.create({
+        email: profile.email.toLowerCase(),
+        firstName: profile.given_name || profile.name || 'Google',
+        lastName: profile.family_name || 'User',
+        avatarUrl: profile.picture,
+        isEmailVerified: true,
+        role: { connect: { id: defaultRole.id } },
+        userPreferences: {
+          create: {
+            theme: 'SYSTEM',
+            emailNotifications: true,
+          },
+        },
+      });
+    }
+
+    // 4. Issue JWT & Session
+    const familyId = crypto.randomUUID();
+    const sessionId = crypto.randomUUID();
+
+    const payload = {
+      userId: user.id,
+      email: user.email,
+      roleId: user.roleId,
+      roleName: user.role.name,
+      sessionId,
+    };
+
+    const accessToken = generateAccessToken(payload);
+    const refreshToken = generateRefreshToken(payload);
+    const tokenHash = this.hashToken(refreshToken);
+
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    await authRepository.createSession({ userId: user.id, token: sessionId, ipAddress, userAgent, expiresAt });
+    await authRepository.createRefreshToken({ userId: user.id, tokenHash, familyId, expiresAt });
+
+    await auditRepository.createLog({
+      userId: user.id,
+      action: 'USER_LOGIN_GOOGLE',
+      entity: 'User',
+      entityId: user.id,
+      ipAddress,
+      userAgent,
+    });
+
+    return {
+      user,
+      tokens: {
+        accessToken,
+        refreshToken,
+        expiresIn: 900,
+      },
+    };
   }
 }
 

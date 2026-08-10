@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { authService } from '../services/auth.service.js';
 import { setRefreshTokenCookie, clearRefreshTokenCookie, REFRESH_TOKEN_COOKIE_NAME } from '../utils/cookie.util.js';
 import { createApiResponse } from '../utils/index.js';
+import { env } from '../config/env.config.js';
 
 export class AuthController {
   public async register(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -105,6 +106,40 @@ export class AuthController {
       res.status(200).json(createApiResponse(true, result.message, null));
     } catch (error) {
       next(error);
+    }
+  }
+
+  public async googleRedirect(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const clientId = env.GOOGLE_CLIENT_ID;
+      const callbackUrl = env.GOOGLE_CALLBACK_URL || `https://chatbot-m2lx.onrender.com/api/v1/auth/google/callback`;
+      if (!clientId) {
+        res.status(500).json(createApiResponse(false, 'Google OAuth Client ID is not configured', null));
+        return;
+      }
+      const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodeURIComponent(callbackUrl)}&response_type=code&scope=${encodeURIComponent('openid profile email')}&access_type=offline&prompt=consent`;
+      res.redirect(googleAuthUrl);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async googleCallback(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const code = req.query.code as string;
+      const webUrl = env.CORS_ORIGIN.split(',')[0] || 'https://abhi-ai-platform-psi.vercel.app';
+      if (!code) {
+        res.redirect(`${webUrl}/login?error=google_auth_failed`);
+        return;
+      }
+
+      const result = await authService.handleGoogleCallback(code, req.ip, req.headers['user-agent']);
+      setRefreshTokenCookie(res, result.tokens.refreshToken);
+
+      res.redirect(`${webUrl}/dashboard`);
+    } catch (error) {
+      const webUrl = env.CORS_ORIGIN.split(',')[0] || 'https://abhi-ai-platform-psi.vercel.app';
+      res.redirect(`${webUrl}/login?error=google_oauth_error`);
     }
   }
 }
