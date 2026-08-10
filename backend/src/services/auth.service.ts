@@ -285,9 +285,9 @@ export class AuthService {
   public async handleGoogleCallback(code: string, ipAddress?: string, userAgent?: string) {
     const clientId = env.GOOGLE_CLIENT_ID;
     const clientSecret = env.GOOGLE_CLIENT_SECRET;
-    const redirectUri = (env.NODE_ENV === 'production' || !env.GOOGLE_CALLBACK_URL || env.GOOGLE_CALLBACK_URL.includes('localhost'))
-      ? `${env.API_URL}/api/v1/auth/google/callback`
-      : env.GOOGLE_CALLBACK_URL;
+    const redirectUri = (env.GOOGLE_CALLBACK_URL && !env.GOOGLE_CALLBACK_URL.includes('localhost'))
+      ? env.GOOGLE_CALLBACK_URL
+      : 'https://chatbot-m2lx.onrender.com/api/v1/auth/google/callback';
 
     // 1. Exchange code for tokens with Google
     const tokenRes = await fetch('https://oauth2.googleapis.com/token', {

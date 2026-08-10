@@ -112,9 +112,10 @@ export class AuthController {
   public async googleRedirect(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const clientId = env.GOOGLE_CLIENT_ID;
-      const callbackUrl = (env.NODE_ENV === 'production' || !env.GOOGLE_CALLBACK_URL || env.GOOGLE_CALLBACK_URL.includes('localhost'))
-        ? `${env.API_URL}/api/v1/auth/google/callback`
-        : env.GOOGLE_CALLBACK_URL;
+      const callbackUrl = (env.GOOGLE_CALLBACK_URL && !env.GOOGLE_CALLBACK_URL.includes('localhost'))
+        ? env.GOOGLE_CALLBACK_URL
+        : 'https://chatbot-m2lx.onrender.com/api/v1/auth/google/callback';
+
       if (!clientId) {
         res.status(500).json(createApiResponse(false, 'Google OAuth Client ID is not configured', null));
         return;
@@ -129,7 +130,10 @@ export class AuthController {
   public async googleCallback(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const code = req.query.code as string;
-      const webUrl = env.CORS_ORIGIN.split(',')[0] || 'https://abhi-ai-platform-psi.vercel.app';
+      const webUrl = (env.WEB_URL && !env.WEB_URL.includes('localhost'))
+        ? env.WEB_URL
+        : 'https://abhi-ai-platform-psi.vercel.app';
+
       if (!code) {
         res.redirect(`${webUrl}/login?error=google_auth_failed`);
         return;
@@ -140,7 +144,9 @@ export class AuthController {
 
       res.redirect(`${webUrl}/dashboard`);
     } catch (error) {
-      const webUrl = env.CORS_ORIGIN.split(',')[0] || 'https://abhi-ai-platform-psi.vercel.app';
+      const webUrl = (env.WEB_URL && !env.WEB_URL.includes('localhost'))
+        ? env.WEB_URL
+        : 'https://abhi-ai-platform-psi.vercel.app';
       res.redirect(`${webUrl}/login?error=google_oauth_error`);
     }
   }
