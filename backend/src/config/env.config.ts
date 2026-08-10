@@ -26,7 +26,7 @@ const envSchema = z.object({
   GOOGLE_CLIENT_ID: z.string().optional(),
   GOOGLE_CLIENT_SECRET: z.string().optional(),
   GOOGLE_CALLBACK_URL: z.string().optional(),
-  CORS_ORIGIN: z.string().default('https://abhi-ai-platform-psi.vercel.app,http://localhost:3000'),
+  CORS_ORIGIN: z.string().default('https://abhi-ai-platform-psi.vercel.app'),
   RATE_LIMIT_WINDOW_MS: z.string().default('900000'),
   RATE_LIMIT_MAX_REQUESTS: z.string().default('100'),
   GEMINI_API_KEY: z.string().optional(),

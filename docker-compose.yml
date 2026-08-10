@@ -53,8 +53,8 @@ services:
       COOKIE_SECRET: "3d63bf02c716588853b43d83e36d48f2deb39cf49aa4d6caad02e3011d096acc709aa3939adc119f76aa440498852e8db2a3f4f027a9810091d7207a59699dde"
       GOOGLE_CLIENT_ID: "your-google-client-id.apps.googleusercontent.com"
       GOOGLE_CLIENT_SECRET: "your-google-client-secret"
-      GOOGLE_CALLBACK_URL: "http://localhost:5000/api/v1/auth/google/callback"
-      CORS_ORIGIN: "http://localhost"
+      GOOGLE_CALLBACK_URL: "https://chatbot-m2lx.onrender.com/api/v1/auth/google/callback"
+      CORS_ORIGIN: "https://abhi-ai-platform-psi.vercel.app"
       GEMINI_API_KEY: "your-gemini-api-key"
     ports:
       - "5000:5000"
@@ -72,7 +72,7 @@ services:
     environment:
       NODE_ENV: production
       PORT: 3000
-      NEXT_PUBLIC_API_URL: "http://localhost/api/v1"
+      NEXT_PUBLIC_API_URL: "https://chatbot-m2lx.onrender.com/api/v1"
     ports:
       - "3000:3000"
     depends_on:

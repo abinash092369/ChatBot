@@ -28,8 +28,8 @@ npm run db:generate
 npm run dev
 ```
 
-- Frontend Web: [http://localhost:3000](http://localhost:3000)
-- Backend API: [http://localhost:5000/api/v1](http://localhost:5000/api/v1)
+- Frontend Web: [https://abhi-ai-platform-psi.vercel.app](https://abhi-ai-platform-psi.vercel.app)
+- Backend API: [https://chatbot-m2lx.onrender.com/api/v1](https://chatbot-m2lx.onrender.com/api/v1)
 
 ### 4. Build Monorepo
 ```bash
