@@ -86,7 +86,7 @@ export function Composer({
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-4">
+    <div className="w-full max-w-4xl mx-auto p-2 sm:p-4">
       {/* File Previews Chip Container */}
       {pendingFiles.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-3 p-3 rounded-xl bg-card border border-border/60">
