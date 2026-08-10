@@ -1,10 +1,10 @@
-# AI Assistant Platform - Phase 1 Foundation
+# ABHI AI - Phase 1 Foundation
 
-Production-Grade AI Assistant Platform built with Next.js 15, React 19, Express, TypeScript, Prisma, PostgreSQL, and Redis.
+Production-Grade ABHI AI Platform built with Next.js 15, React 19, Express, TypeScript, Prisma, PostgreSQL, and Redis.
 
 ## Phase 1 Capabilities
 
-- **Monorepo Architecture**: Clean separation with `apps/` and `packages/`.
+- **Architecture**: Decoupled architecture (`frontend/` Next.js 15 app and `backend/` Express TypeScript API).
 - **Authentication**: JWT access tokens, HttpOnly refresh token rotation, Google OAuth readiness, email verification, and password reset.
 - **Role-Based Access Control (RBAC)**: Fine-grained user permissions and system roles (`ADMIN`, `USER`, `GUEST`).
 - **Database & Prisma**: PostgreSQL schema featuring 12 core tables, indexed foreign keys, audit logs, and seeders.

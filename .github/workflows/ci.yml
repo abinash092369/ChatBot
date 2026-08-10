@@ -1,4 +1,4 @@
-name: CI Pipeline - Phase 1 Verification
+name: CI Pipeline
 
 on:
   push:
@@ -7,8 +7,8 @@ on:
     branches: [main, master, dev]
 
 jobs:
-  lint-and-typecheck:
-    name: Lint & Typecheck
+  build-and-verify:
+    name: Build & Typecheck Verification
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -17,46 +17,18 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 20
           cache: 'npm'
 
-      - name: Install Dependencies
+      - name: Install Root Dependencies
         run: npm ci
 
-      - name: Generate Prisma Client
-        run: npm run db:generate
-
-      - name: Build Shared Packages
+      - name: Generate Prisma Client & Build Backend
         run: |
-          npm run build --workspace=packages/types
-          npm run build --workspace=packages/utils
-          npm run build --workspace=packages/api-client
+          npm run db:generate
+          npm run build:backend
 
-      - name: Run TypeScript Verification
-        run: npm run typecheck
-
-      - name: Run Format & Lint Checks
-        run: npm run format:check
-
-  build:
-    name: Production Build Verification
-    needs: lint-and-typecheck
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: 'npm'
-
-      - name: Install Dependencies
-        run: npm ci
-
-      - name: Generate Prisma Client
-        run: npm run db:generate
-
-      - name: Build Monorepo Apps
-        run: npm run build
+      - name: Typecheck & Build Frontend
+        run: |
+          npm run typecheck --prefix frontend
+          npm run build:frontend

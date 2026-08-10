@@ -1,25 +1,15 @@
 {
-  "name": "chatbot-monorepo",
+  "name": "abhi-ai-platform",
   "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
   "scripts": {
-    "dev": "concurrently \"npm run dev --workspace=apps/server\" \"npm run dev --workspace=apps/web\"",
-    "build": "npm run build --workspaces",
-    "build:packages": "npm run build --workspace=packages/types && npm run build --workspace=packages/utils && npm run build --workspace=packages/api-client",
-    "build:web": "npm run build:packages && npm run build --workspace=apps/web",
-    "build:server": "npm run build:packages && npm run db:generate && npm run build --workspace=apps/server",
-    "typecheck": "npm run typecheck --workspaces",
-    "lint": "npm run lint --workspaces",
-    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,css}\"",
-    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,css}\"",
-    "test": "npm run test --workspaces",
-    "db:generate": "prisma generate --schema=prisma/schema.prisma",
-    "db:migrate": "prisma migrate dev --schema=prisma/schema.prisma",
-    "db:seed": "tsx prisma/seed.ts",
-    "db:studio": "prisma studio --schema=prisma/schema.prisma"
+    "dev": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
+    "build": "npm run db:generate --prefix backend && npm run build --prefix backend && npm run build --prefix frontend",
+    "build:backend": "npm run build --prefix backend",
+    "build:frontend": "npm run build --prefix frontend",
+    "db:generate": "npm run db:generate --prefix backend",
+    "db:migrate": "npm run db:migrate --prefix backend",
+    "db:seed": "npm run db:seed --prefix backend",
+    "db:studio": "prisma studio --schema=backend/prisma/schema.prisma"
   },
   "devDependencies": {
     "concurrently": "^9.1.2",

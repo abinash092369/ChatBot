@@ -2,20 +2,13 @@
 
 ## Architecture Overview
 
-The AI Assistant Platform is built as a production-grade monorepo using npm workspaces.
+The ABHI AI Platform is built as a production-grade fullstack application with clean frontend/backend separation.
 
 ```
 chatbot/
-├── apps/
-│   ├── web/        # Next.js 15 App Router + React 19 + Tailwind CSS + Zustand
-│   └── server/     # Node.js + Express + TypeScript Clean Architecture
-├── packages/
-│   ├── types/      # Shared TypeScript interfaces & Enums
-│   ├── config/     # Base tsconfigs, ESLint & Prettier configs
-│   ├── utils/      # Shared helper utilities & formatters
-│   └── api-client/ # Type-safe Axios client with refresh token interceptor
-├── prisma/         # PostgreSQL schema (12 models) & seed script
-├── docker/         # Production Dockerfiles (web & server)
+├── frontend/       # Next.js 15 App Router + React 19 + Tailwind CSS + Zustand
+├── backend/        # Node.js + Express + TypeScript + Prisma Clean Architecture
+│   └── prisma/     # PostgreSQL schema & seed script
 ├── nginx/          # Nginx reverse proxy configuration
 ├── docs/           # System documentation
 └── .github/        # GitHub Actions CI workflows
