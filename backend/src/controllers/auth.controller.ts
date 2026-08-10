@@ -142,7 +142,7 @@ export class AuthController {
       const result = await authService.handleGoogleCallback(code, req.ip, req.headers['user-agent']);
       setRefreshTokenCookie(res, result.tokens.refreshToken);
 
-      res.redirect(`${webUrl}/dashboard`);
+      res.redirect(`${webUrl}/auth/callback?token=${encodeURIComponent(result.tokens.accessToken)}`);
     } catch (error) {
       const webUrl = (env.WEB_URL && !env.WEB_URL.includes('localhost'))
         ? env.WEB_URL
