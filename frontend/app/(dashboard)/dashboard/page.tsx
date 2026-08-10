@@ -541,7 +541,7 @@ function UserChatDashboardView() {
       headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://chatbot-m2lx.onrender.com/api/v1';
 
     try {
       const response = await fetch(`${apiUrl}/chat/stream`, {
@@ -625,7 +625,7 @@ function UserChatDashboardView() {
     const token = useAuthStore.getState().accessToken;
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };
     if (token) headers['Authorization'] = `Bearer ${token}`;
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://chatbot-m2lx.onrender.com/api/v1';
 
     try {
       const response = await fetch(`${apiUrl}/chat/regenerate`, {

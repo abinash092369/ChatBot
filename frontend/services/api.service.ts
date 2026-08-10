@@ -1,7 +1,7 @@
 import { ApiClient } from '@/lib/api-client';
 import { useAuthStore } from '../stores/auth.store';
 
-const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
+const baseURL = process.env.NEXT_PUBLIC_API_URL || 'https://chatbot-m2lx.onrender.com/api/v1';
 
 export const apiClient = new ApiClient({
   baseURL,
